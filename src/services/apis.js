@@ -6,60 +6,38 @@ class PokeApi {
   }
 
   async listTrainers () {
-    const { clients: { hyper } } = this.context
-
-    const trainers = await hyper.data.query({
-      type: 'trainer'
-    }).then(res => res.docs)
-
+    const { dataloaders: { findByTypeDataloader } } = this.context
+    const trainers = await findByTypeDataloader.load('trainer')
     return trainers
   }
 
   async findTrainerById (id) {
-    const { clients: { hyper } } = this.context
-    const trainer = await hyper.data.get(id)
-    return trainer.status === 404 ? null : trainer
+    const { dataloaders: { findByIdDataloader } } = this.context
+    const trainer = await findByIdDataloader.load(id)
+    return trainer
   }
 
   async listPokemons () {
-    const { clients: { hyper } } = this.context
-
-    const pokemons = await hyper.data.query({
-      type: 'pokemon'
-    }).then(res => res.docs)
-
+    const { dataloaders: { findByTypeDataloader } } = this.context
+    const pokemons = await findByTypeDataloader.load('pokemon')
     return pokemons
   }
 
   async findPokemonById (id) {
-    const { clients: { hyper } } = this.context
-    const pokemon = await hyper.data.get(id)
-    return pokemon.status === 404 ? null : pokemon
+    const { dataloaders: { findByIdDataloader } } = this.context
+    const pokemon = await findByIdDataloader.load(id)
+    return pokemon
   }
 
   async findPokemonsByTrainerId (trainerId) {
-    const { clients: { hyper } } = this.context
-
-    const pokemons = await hyper.data.query({
-      type: 'pokemon',
-      parent: trainerId
-    }).then(res => res.docs)
-
+    const { dataloaders: { findByParentDataloader } } = this.context
+    const pokemons = await findByParentDataloader.load(trainerId)
     return pokemons
   }
 
   async findPokemonsByMoveName (moveName) {
-    const { clients: { hyper } } = this.context
-
-    const pokemons = await hyper.data.query({
-      type: 'pokemon',
-      moves: {
-        $elemMatch: {
-          name: moveName
-        }
-      }
-    }).then(res => res.docs)
-
+    const { dataloaders: { findPokemonsByMoveNameDataloader } } = this.context
+    const pokemons = await findPokemonsByMoveNameDataloader.load(moveName)
     return pokemons
   }
 
@@ -75,11 +53,11 @@ class PokeApi {
   }
 
   async findMoveByName ({ pokemonId, moveName }) {
-    const { clients: { hyper, pokeClient } } = this.context
+    const { dataloaders: { findByIdDataloader, findMoveMetaByNameDataloader } } = this.context
 
     const [move, moveMeta] = await Promise.all([
-      hyper.data.get(pokemonId).then(p => p.moves.find(propEq('name', moveName))),
-      pokeClient.findMoveByName(moveName)
+      findByIdDataloader.load(pokemonId).then(p => p.moves.find(propEq('name', moveName))),
+      findMoveMetaByNameDataloader.load(moveName)
     ])
 
     return compose(
