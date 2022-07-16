@@ -8,5 +8,14 @@ export const typeDefs = gql`
 `
 
 export const resolvers = {
-  Trainer: {}
+  Trainer: {
+    name: async ({ _id }, _args, { apis: { PokeApi } }) => {
+      const trainer = await PokeApi.findTrainerById(_id)
+      return trainer.name
+    },
+    pokemon: async ({ _id }, _args, { apis: { PokeApi } }) => {
+      const pokemons = await PokeApi.findPokemonsByTrainerId(_id)
+      return pokemons
+    }
+  }
 }
