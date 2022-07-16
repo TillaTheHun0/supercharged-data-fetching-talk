@@ -1,0 +1,37 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - name: Setup
+    init: |
+      npm i
+    command: |
+      echo "HYPER=$(gp url 6363)/pokemon" >> .env
+      gp sync-done setup
+
+  - name: Start hyper-nano
+    command: |
+      gp sync-await setup
+      gp sync-done hyper && npm run hyper
+
+  - name: Start
+    init: |
+      gp sync-await hyper
+      sleep 10 && node ./scripts/seed.js
+    command: |
+      nvm use
+      npm start
+
+ports:
+  - port: 3000
+    visibility: public
+    onOpen: ignore
+  - port: 6363
+    visibility: public
+    onOpen: ignore
+
+vscode:
+  extensions:
+    - standard.vscode-standard
+    - graphql.vscode-graphql
+    - zjffun.snippetsmanager

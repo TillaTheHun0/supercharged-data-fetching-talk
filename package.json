@@ -1,0 +1,36 @@
+{
+  "name": "supercharged-data-fetching-talk",
+  "version": "1.0.0",
+  "homepage": "https://github.com/TillaTheHun0/supercharged-data-fetching-talk#readme",
+  "license": "MIT",
+  "author": "tyler@hyper.io",
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "format": "standard --fix src",
+    "hyper": "node hyper-dev.js",
+    "start": "NODE_ENV=development nodemon"
+  },
+  "dependencies": {
+    "@graphql-tools/resolvers-composition": "^6.5.0",
+    "@graphql-tools/schema": "^8.5.0",
+    "case": "^1.6.3",
+    "cuid": "^2.1.8",
+    "express": "^4.18.1",
+    "graphql": "^16.5.0",
+    "graphql-helix": "^1.13.0",
+    "graphql-tag": "^2.12.6",
+    "hyper-connect": "^0.2.1",
+    "p-throttle": "^5.0.0",
+    "ramda": "^0.28.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.1",
+    "nodemon": "^2.0.19",
+    "standard": "^17.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "engineStrict": true
+}
