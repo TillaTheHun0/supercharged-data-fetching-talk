@@ -8,6 +8,7 @@ class PokeApi {
   async listTrainers () {
     const { dataloaders: { findByTypeDataloader } } = this.context
     const trainers = await findByTypeDataloader.load('trainer')
+    this.primeTrainerDataloaders(trainers)
     return trainers
   }
 
@@ -20,6 +21,7 @@ class PokeApi {
   async listPokemons () {
     const { dataloaders: { findByTypeDataloader } } = this.context
     const pokemons = await findByTypeDataloader.load('pokemon')
+    this.primePokemonDataloaders(pokemons)
     return pokemons
   }
 
@@ -64,6 +66,16 @@ class PokeApi {
       mergeLeft(move),
       pick(['power', 'pp', 'accuracy'])
     )(moveMeta)
+  }
+
+  primeTrainerDataloaders (trainers) {
+    const { dataloaders: { findByIdDataloader } } = this.context
+    trainers.map(t => findByIdDataloader.prime(t._id, t))
+  }
+
+  primePokemonDataloaders (pokemons) {
+    const { dataloaders: { findByIdDataloader } } = this.context
+    pokemons.map(p => findByIdDataloader.prime(p._id, p))
   }
 }
 
