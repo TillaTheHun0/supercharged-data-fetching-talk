@@ -44,9 +44,21 @@ const findPokemonsByMoveNameDataloader = (context) => new Dataloader(
 
 const findMoveMetaByNameDataloader = (context) => new Dataloader(
   async (names) => {
-    const { clients: { pokeClient } } = context
+    const { clients: { hyper, pokeClient } } = context
 
-    const meta = await Promise.all(names.map(n => pokeClient.findMoveByName(n)))
+    const docs = await hyper.cache.query('move-meta-*').then(res => res.docs)
+
+    const meta = await Promise.all(names.map(async n => {
+      const fromCache = docs.find(({ value }) => value.name === n)
+
+      if (fromCache) {
+        return fromCache.value
+      }
+
+      const fromSource = await pokeClient.findMoveByName(n)
+      await hyper.cache.set(`move-meta-${fromSource.name}`, fromSource)
+      return fromSource
+    }))
 
     return meta
   }
